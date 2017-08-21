@@ -40,6 +40,8 @@ Theta2_grad = zeros(size(Theta2));
 %         computed in ex4.m
 %
 
+% Step 1 : Feedforward
+
 % Layer 1
 a1 = [ones(m, 1) X];
 % Layer 2
@@ -80,6 +82,32 @@ J = J + lambda / (2 * m) * (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 
 %               over the training examples if you are implementing it for the
 %               first time.
 %
+
+
+Theta1_grad = zeros(size(Theta1));
+Theta2_grad = zeros(size(Theta2));
+
+for t = 1:m
+  y_i = zeros(1, K);
+  y_i(y(t)) = 1;
+
+  % Step 2
+	delta3 = a3(t, :) - y_i;
+
+  % Step 3 : Hidden layer
+	delta2 = delta3 * Theta2 .* sigmoidGradient([1, z2(t, :)]);
+  delta2 = delta2(2:end);
+
+  % Step 4 : Accumulate gradient
+	Theta1_grad = Theta1_grad + delta2' * a1(t, :);
+	Theta2_grad = Theta2_grad + delta3' * a2(t, :);
+end;
+
+% Step 5 : Unregularized gradient
+Theta1_grad = Theta1_grad / m;
+Theta2_grad = Theta2_grad / m;
+
+
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
